@@ -6,6 +6,8 @@ import outputs.html.HTMLStrategy;
 import outputs.latex.LatexStategy;
 import outputs.OutputStrategy;
 
+import java.io.IOException;
+
 public class Main {
 
     private final MainCLIParameters mainArgs = new MainCLIParameters();
@@ -34,6 +36,18 @@ public class Main {
 
         // Gets value passed in via command line and sets output strategy (HTML, LaTeX, Ascii)
         setStrategy(mainArgs.getFormat());
+        MDParser parser = new MDParser(mainArgs.getInputFile(), output);
+
+        try {
+            parser.parse();
+        }
+        catch (MDParseException e) {
+            System.out.println(e.getMessage());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void showUsage(JCommander jcommander) {
