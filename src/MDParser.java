@@ -17,8 +17,6 @@ public class MDParser {
 
     // Useful Patterns
 
-    // Core
-
     // 100% working
     static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )");
 
@@ -59,7 +57,7 @@ public class MDParser {
         return "";
     }
 
-    public void parse() throws MDParseException {
+    public void parse() {
         Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
 
         // Create tree structure, begin to parse each paragraph block

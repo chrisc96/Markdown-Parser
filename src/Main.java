@@ -37,14 +37,7 @@ public class Main {
         // Gets value passed in via command line and sets output strategy (HTML, LaTeX, Ascii)
         setStrategy(mainArgs.getFormat());
         MDParser parser = new MDParser(mainArgs.getInputFile(), output);
-
-        try {
-            parser.parse();
-        }
-        catch (MDParseException e) {
-            System.out.println(e.getMessage());
-        }
-
+        parser.parse();
     }
 
     private void showUsage(JCommander jcommander) {
