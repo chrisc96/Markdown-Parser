@@ -44,9 +44,6 @@ public class Main {
         catch (MDParseException e) {
             System.out.println(e.getMessage());
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
