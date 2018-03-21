@@ -27,6 +27,7 @@ public class MainCLIParameters {
     @Getter Path inputFile;
 
     @Parameter( names = {"--format", "-f"},
+                validateWith = OutputStrategyValidator.class,
                 description = "Format for markdown to be exported to (HTML = 0, LaTeX = 1, ASCII = 2")
     @Getter int format = HTML;
 }
