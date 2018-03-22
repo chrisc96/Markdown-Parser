@@ -1,6 +1,8 @@
+import jdk.nashorn.internal.ir.Block;
 import markdown_tree.BlockNode;
 import markdown_tree.DocumentNode;
 import markdown_tree.HeadingNode;
+import markdown_tree.I_BlockNode;
 import outputs.OutputStrategy;
 
 import java.io.*;
@@ -61,43 +63,50 @@ public class MDParser {
         Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
 
         // Create tree structure, begin to parse each paragraph block
-        DocumentNode markdownTree = new DocumentNode();
+        I_BlockNode markdownTree = new DocumentNode();
 
         for (String string : pBlocks.keySet()) {
-            BlockNode pBlock = pBlocks.get(string);
-            pBlock.setBlockType(BlockNode.ParagraphBlock);
-            markdownTree.getBlockParagraphs().add(pBlock);
-
             Scanner sc = new Scanner(string);
-            sc.useDelimiter("\t");
-            parseParagraph(sc, pBlock);
+            sc.useDelimiter("\t"); // May need to change
+
+            parseParagraph(sc, markdownTree);
         }
     }
 
-    private void parseParagraph(Scanner sc, BlockNode pBlock) {
+    private BlockNode parseParagraph(Scanner sc, I_BlockNode parent) {
+        BlockNode paragraphBlock = new BlockNode(BlockNode.ParagraphBlock);
+        parent.addChild(paragraphBlock);
+
+        // Parse inner content
         if (sc.hasNext(HEADING)) {
             // Go through groupings matched by regex
             for (int i = 1; i <= sc.match().groupCount() - 1; i++) {
                 if (sc.match().group(i).matches(HEADING.pattern())) {
-                    parseHeading(pBlock, sc.match().group(i));
+                    return parseHeading(paragraphBlock, sc.match().group(i));
                 }
                 else {
                     // Should be an inline??
                 }
                 // System.out.println("Group " + i + ": " + sc.match().group(i));
             }
-            String str = sc.next();
+            sc.next();
         }
         // Default fall back case, parse it as text
-        else if (sc.hasNext(TEXT)) {
-
+        else {
+            return new BlockNode();
         }
+        return null;
     }
 
-    private void parseHeading(BlockNode block, String headingStr) {
-        // Count how many #### there are, then pass that into the heading level
+    private BlockNode parseHeading(BlockNode parent, String headingStr) {
         BlockNode heading = new HeadingNode(HeadingNode.getLevelFrom(headingStr));
-        block.getChildren().add(heading);
+        parent.addChild(heading);
+
+        // Parse inlines
+
+
+        // Count how many #### there are, then pass that into the heading level
+        return heading;
     }
 
 
