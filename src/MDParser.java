@@ -76,17 +76,16 @@ public class MDParser {
 
     private void parseParagraph(Scanner sc, BlockNode pBlock) {
         if (sc.hasNext(HEADING)) {
-            // Go through groupings, should be #### SOME INLINES
-            for (int i = 1; i <= sc.match().groupCount(); i++) {
+            // Go through groupings matched by regex
+            for (int i = 1; i <= sc.match().groupCount() - 1; i++) {
                 if (sc.match().group(i).matches(HEADING.pattern())) {
                     parseHeading(pBlock, sc.match().group(i));
                 }
                 else {
                     // Should be an inline??
                 }
-                System.out.println("Group " + i + ": " + sc.match().group(i));
+                // System.out.println("Group " + i + ": " + sc.match().group(i));
             }
-
             String str = sc.next();
         }
         // Default fall back case, parse it as text
