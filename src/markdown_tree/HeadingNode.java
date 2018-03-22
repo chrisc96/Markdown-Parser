@@ -10,18 +10,8 @@ import java.util.stream.Collectors;
 
 public class HeadingNode extends BlockNode {
 
-    public static final int H1 = 1;
-    public static final int H2 = 2;
-    public static final int H3 = 3;
-    public static final int H4 = 4;
-    public static final int H5 = 5;
-    public static final int H6 = 6;
-
-    @Getter
-    int headingNum;
-
     public HeadingNode(int headLevel) {
-        this.headingNum = headLevel;
+        this.blockType = headLevel;
     }
 
     public static int getLevelFrom(String str) {
