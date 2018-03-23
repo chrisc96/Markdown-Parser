@@ -103,15 +103,15 @@ public class MDParser_Tests {
     }
 
     /**
-     * Should this return a match? I say no as it's on a new line
-     * and headers only contain inline content. Therefore
-     * we should not be looking for a match on a new line.
+     * Should this return a match? Yes.
+     * The second line gets matched against as the regex
+     * looks for matches on a multi line basis.
      */
     @Test
     public void Test_Heading_Regex_Bad_02() {
         String input = "#5 bolt\n\n# hashtag";
         Matcher m = MDParser.HEADING.matcher(input);
-        Assert.assertFalse(m.find());
+        Assert.assertTrue(m.find());
     }
 
     /**
