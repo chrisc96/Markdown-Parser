@@ -11,7 +11,6 @@ import java.io.IOException;
 public class Main {
 
     private final MainCLIParameters mainArgs = new MainCLIParameters();
-    private OutputStrategy output;
 
     public static void main(String ... argv) {
         Main main = new Main();
@@ -35,8 +34,7 @@ public class Main {
         }
 
         // Gets value passed in via command line and sets output strategy (HTML, LaTeX, Ascii)
-        setStrategy(mainArgs.getFormat());
-        MDParser parser = new MDParser(mainArgs.getInputFile(), output);
+        MDParser parser = new MDParser(mainArgs.getInputFile(), getStrategy(mainArgs.getFormat()));
         parser.parse();
     }
 
@@ -45,8 +43,8 @@ public class Main {
         System.exit(0);
     }
 
-    private void setStrategy(Integer format) {
-        output =    format == MainCLIParameters.HTML ? new HTMLStrategy() :
-                    format == MainCLIParameters.LATEX ? new LatexStategy() : new AsciiStategy();
+    private OutputStrategy getStrategy(Integer format) {
+        return  format == MainCLIParameters.HTML ? new HTMLStrategy() :
+                format == MainCLIParameters.LATEX ? new LatexStategy() : new AsciiStategy();
     }
 }
