@@ -1,4 +1,3 @@
-import jdk.nashorn.internal.ir.Block;
 import markdown_tree.*;
 import outputs.OutputStrategy;
 
@@ -18,22 +17,19 @@ public class MDParser {
     // Useful Patterns
 
     // 100% working
-    static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )");
+    static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )", Pattern.MULTILINE);
 
     // UNTESTED
     static Pattern ITALIC = Pattern.compile("^_([^\\s_](?:[^_]|__)+?[^\\s_])_\\b|^\\*((?:\\*\\*|[^*])+?)\\*(?!\\*)");
     static Pattern BOLD = Pattern.compile("^__([\\s\\S]+?)__(?!_)|^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)");
 
-    static Pattern HARDBREAK = Pattern.compile("( {2})(\\n)");
+    static Pattern HARDBREAK = Pattern.compile("( {2})(\\n)", Pattern.MULTILINE);
     static Pattern SOFTBREAK = Pattern.compile("\n");
-    static Pattern PARAGRAPHBLOCK = Pattern.compile("\n\n");
+    static Pattern PARAGRAPHBLOCK = Pattern.compile("\\n[\\n]+", Pattern.MULTILINE);
 
     static Pattern BLOCKQUOTE = Pattern.compile("(^> | {4})");
 
-    // Finds anything that isn't escaped by two new lines. Allows one new line.
-    static Pattern TEXT = Pattern.compile("^(?s)(?:(?!\\n\\n).)+");
-
-    static Pattern TEXT2 = Pattern.compile("^[^\\n]+", Pattern.MULTILINE);
+    static Pattern TEXT = Pattern.compile("^[^\\n]+", Pattern.MULTILINE);
 
 
     public MDParser(Path inputFile, OutputStrategy output) {
@@ -108,7 +104,7 @@ public class MDParser {
      */
     private void parseInline(BlockNode parent, Scanner sc, String group) {
         if (sc.hasNext(BOLD) || sc.hasNext(ITALIC)) {
-            Matcher m = firstPatternOf(group, BOLD, ITALIC);
+            Matcher m = firstPattern(group, BOLD, ITALIC);
             if (m.pattern() == BOLD) {
                 BlockNode bold = new BlockNode(BlockNode.Bold);
                 parent.addChild(bold);
@@ -136,7 +132,7 @@ public class MDParser {
         }
     }
 
-    private Matcher firstPatternOf(String para, Pattern... pattern) {
+    private Matcher firstPattern(String para, Pattern... pattern) {
         Integer lowestIndex = Integer.MAX_VALUE;
         Matcher firstPattern = null;
         for (Pattern p: pattern) {
@@ -177,31 +173,58 @@ public class MDParser {
 
         // When headings finish, they are their own paragraph block
         // so we need to combine this into our match
-        Pattern paragraphBlockComplete = Pattern.compile(PARAGRAPHBLOCK + "|" + HEADING, Pattern.MULTILINE);
-        Matcher m = paragraphBlockComplete.matcher(markdownInput);
+
+//        Pattern paragraphBlockComplete = Pattern.compile(PARAGRAPHBLOCK + "|" + HEADING, Pattern.MULTILINE);
+//        Matcher m = paragraphBlockComplete.matcher(markdownInput);
+
+
+        Matcher firstPattern = firstPattern(markdownInput, HEADING, PARAGRAPHBLOCK, TEXT);
+        int idx = 0;
         int lastIdxFound = 0;
-        while (m.find()) {
-            Matcher heading = HEADING.matcher(m.group());
-            int idx = m.end();
-            if (heading.find()) {
+
+        while (firstPattern != null) {
+            idx += firstPattern.end();
+            // Checking the first pattern we found was a heading
+            if (firstPattern.pattern() == HEADING) {
                 BlockNode block = new BlockNode();
                 String headingToEdit = markdownInput.substring(lastIdxFound, idx);
                 String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
 
                 pBlocks.put(headingWithNoNewLines, block);
-                lastIdxFound = idx;
             }
-            // Must be text
-            else {
+            else if (firstPattern.pattern() == PARAGRAPHBLOCK) {
+
+            }
+            else if (firstPattern.pattern() == TEXT) {
                 BlockNode block = new BlockNode();
-                Matcher pblock = PARAGRAPHBLOCK.matcher(m.group());
-                if (pblock.find()) {
-                    System.out.println("HERE");
-                }
                 String textNoNewLines = markdownInput.substring(lastIdxFound, idx);
                 pBlocks.put(textNoNewLines, block);
-                lastIdxFound = idx;
             }
+            lastIdxFound = idx;
+            firstPattern = firstPattern(markdownInput.substring(lastIdxFound, markdownInput.length()), HEADING, PARAGRAPHBLOCK, TEXT);
+
+//
+//            Matcher heading = HEADING.matcher(m.group());
+//
+//            if (heading.find()) {
+//                BlockNode block = new BlockNode();
+//                String headingToEdit = markdownInput.substring(lastIdxFound, idx);
+//                String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
+//
+//                pBlocks.put(headingWithNoNewLines, block);
+//                lastIdxFound = idx;
+//            }
+//            // Must be text
+//            else {
+//                BlockNode block = new BlockNode();
+//                Matcher pblock = PARAGRAPHBLOCK.matcher(m.group());
+//                if (pblock.find()) {
+//                    System.out.println("HERE");
+//                }
+//                String textNoNewLines = markdownInput.substring(lastIdxFound, idx);
+//                pBlocks.put(textNoNewLines, block);
+//                lastIdxFound = idx;
+//            }
             // heading.reset();
         }
         // Last paragraph
