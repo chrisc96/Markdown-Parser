@@ -9,7 +9,6 @@ import java.util.List;
 public class BlockNode extends DocumentNode {
 
     public static final int ParagraphBlock = 0;
-
     // HEADING 1-6 NEED TO HAVE VALUE 1-6 UNLESS YOU WANT TO BOILERPLATE CLASSES...
     public static final int H1 = 1;
     public static final int H2 = 2;

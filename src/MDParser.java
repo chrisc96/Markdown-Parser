@@ -1,14 +1,12 @@
 import jdk.nashorn.internal.ir.Block;
-import markdown_tree.BlockNode;
-import markdown_tree.DocumentNode;
-import markdown_tree.HeadingNode;
-import markdown_tree.I_BlockNode;
+import markdown_tree.*;
 import outputs.OutputStrategy;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,9 +21,8 @@ public class MDParser {
     static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )");
 
     // UNTESTED
-    static Pattern ITALIC = Pattern.compile("");
-    static Pattern EMPHASIS = Pattern.compile("");
-    static Pattern BOLD = Pattern.compile("");
+    static Pattern ITALIC = Pattern.compile("^_([^\\s_](?:[^_]|__)+?[^\\s_])_\\b|^\\*((?:\\*\\*|[^*])+?)\\*(?!\\*)");
+    static Pattern BOLD = Pattern.compile("^__([\\s\\S]+?)__(?!_)|^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)");
 
     static Pattern HARDBREAK = Pattern.compile("( {2})(\\n)");
     static Pattern SOFTBREAK = Pattern.compile("\n");
@@ -33,7 +30,10 @@ public class MDParser {
 
     static Pattern BLOCKQUOTE = Pattern.compile("(^> | {4})");
 
-    static Pattern TEXT = Pattern.compile("^[^\\n]+");
+    // Finds anything that isn't escaped by two new lines. Allows one new line.
+    static Pattern TEXT = Pattern.compile("^(?s)(?:(?!\\n\\n).)+");
+
+    static Pattern TEXT2 = Pattern.compile("^[^\\n]+", Pattern.MULTILINE);
 
 
     public MDParser(Path inputFile, OutputStrategy output) {
@@ -73,43 +73,68 @@ public class MDParser {
         }
     }
 
-    private BlockNode parseParagraph(Scanner sc, I_BlockNode parent) {
+    private void parseParagraph(Scanner sc, I_BlockNode parent) {
         BlockNode paragraphBlock = new BlockNode(BlockNode.ParagraphBlock);
         parent.addChild(paragraphBlock);
 
         // Parse inner content
         if (sc.hasNext(HEADING)) {
-            // Go through groupings matched by regex
-            for (int i = 1; i <= sc.match().groupCount() - 1; i++) {
-                if (sc.match().group(i).matches(HEADING.pattern())) {
-                    return parseHeading(paragraphBlock, sc.match().group(i));
-                }
-                else {
-                    // Should be an inline??
-                }
-                // System.out.println("Group " + i + ": " + sc.match().group(i));
-            }
-            sc.next();
+            parseHeading(paragraphBlock, sc);
         }
         // Default fall back case, parse it as text
         else {
-            return new BlockNode();
+            parseText(paragraphBlock, sc);
         }
-        return null;
     }
 
-    private BlockNode parseHeading(BlockNode parent, String headingStr) {
-        BlockNode heading = new HeadingNode(HeadingNode.getLevelFrom(headingStr));
+    private void parseHeading(BlockNode parent, Scanner sc) {
+        // Go through groupings matched by regex
+        MatchResult headingMatchResult = sc.match();
+        int headingLevel = HeadingNode.getLevelFrom(headingMatchResult.group(1));
+        BlockNode heading = new HeadingNode(headingLevel);
         parent.addChild(heading);
 
-        // Parse inlines
-
-
-        // Count how many #### there are, then pass that into the heading level
-        return heading;
+        if (headingMatchResult.group(2) != null) {
+            parseInline(heading, sc, sc.match().group(2).trim());
+        }
     }
 
+    /**
+     * Sub parser for inline content
+     * Recognises text, italics, bold, inline codespan
+     * @param parent
+     * @param sc
+     * @param group
+     */
+    private void parseInline(BlockNode parent, Scanner sc, String group) {
+        if (sc.hasNext(BOLD) || sc.hasNext(ITALIC)) {
+            Matcher m = firstPatternOf(group, BOLD, ITALIC);
+            if (m.pattern() == BOLD) {
+                BlockNode bold = new BlockNode(BlockNode.Bold);
+                parent.addChild(bold);
 
+                parseInline(parent, sc, m.group());
+            }
+            else {
+                BlockNode italic = new BlockNode(BlockNode.Italic);
+                parent.addChild(italic);
+
+                parseInline(parent, sc, m.group());
+            }
+        }
+        // Must be text
+        else {
+            parseText(parent, sc);
+        }
+    }
+
+    private void parseText(BlockNode parent, Scanner sc) {
+        Matcher m = TEXT.matcher(sc.match().group());
+        if (m.find()) {
+            BlockNode text = new TextNode(m.group());
+            parent.addChild(text);
+        }
+    }
 
     private Matcher firstPatternOf(String para, Pattern... pattern) {
         Integer lowestIndex = Integer.MAX_VALUE;
@@ -125,8 +150,8 @@ public class MDParser {
     }
 
     /**
-     * Goes through markdown input and locates \n\n which define paragraph blocks.
-     * This defines where our tokeniser doesn't need to keep looking any further.
+     * Goes through markdown input and returns paragraphBlocks.
+     * Essentially acts as a lexer.
      * E.G
      * 1st\n
      * Paragraph\n
@@ -134,8 +159,15 @@ public class MDParser {
      * 2nd\n
      * Paragraph
      *
-     * Returns two Strings, 1. 1st\nParagraph\n\n
+     * Returns two Strings, 1. 1st\nParagraph
      *                      2. 2nd\nParagraph
+     *
+     * E.G 2
+     * # HELLO\n
+     * Hi
+     *
+     * Returns two Strings  1. # Hello
+     *                      2. Hi
      *
      * @param markdownInput some markdown input
      * @return Map of each paragraphs content to their equal BlockNode
@@ -143,27 +175,47 @@ public class MDParser {
     public Map<String, BlockNode> getParagraphBlocks(String markdownInput) {
         Map<String, BlockNode> pBlocks = new LinkedHashMap<>();
 
-        Matcher m = PARAGRAPHBLOCK.matcher(markdownInput);
+        // When headings finish, they are their own paragraph block
+        // so we need to combine this into our match
+        Pattern paragraphBlockComplete = Pattern.compile(PARAGRAPHBLOCK + "|" + HEADING, Pattern.MULTILINE);
+        Matcher m = paragraphBlockComplete.matcher(markdownInput);
         int lastIdxFound = 0;
         while (m.find()) {
+            Matcher heading = HEADING.matcher(m.group());
             int idx = m.end();
+            if (heading.find()) {
+                BlockNode block = new BlockNode();
+                String headingToEdit = markdownInput.substring(lastIdxFound, idx);
+                String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
 
-            BlockNode block = new BlockNode();
-            // idx - 2 removes \n\n at end of paragraph
-            pBlocks.put(markdownInput.substring(lastIdxFound, idx - 2), block);
-            lastIdxFound = idx;
+                pBlocks.put(headingWithNoNewLines, block);
+                lastIdxFound = idx;
+            }
+            // Must be text
+            else {
+                BlockNode block = new BlockNode();
+                Matcher pblock = PARAGRAPHBLOCK.matcher(m.group());
+                if (pblock.find()) {
+                    System.out.println("HERE");
+                }
+                String textNoNewLines = markdownInput.substring(lastIdxFound, idx);
+                pBlocks.put(textNoNewLines, block);
+                lastIdxFound = idx;
+            }
+            // heading.reset();
         }
         // Last paragraph
-        BlockNode block = new BlockNode();
-        pBlocks.put(markdownInput.substring(lastIdxFound, markdownInput.length()), block);
-
+        if (lastIdxFound != markdownInput.length()) {
+            BlockNode block = new BlockNode();
+            pBlocks.put(markdownInput.substring(lastIdxFound, markdownInput.length()), block);
+        }
         return pBlocks;
     }
 
     private String preProcessMarkdown(String md) {
         // Standardize line endings:
-        md = md.replaceAll("\\r\\n", "\n "); 	// Windows to Unix
-        md = md.replaceAll("\\r", "\n ");    	// Mac to Unix
+        md = md.replaceAll("\\r\\n", "\n"); 	// Windows to Unix
+        md = md.replaceAll("\\r", "\n");    	// Mac to Unix
 
         // Remove un-necessary line breaks (No need for 5, when 2 signifies a markdown line break)
         md = md.replaceAll("\\n\\n(?=\\n+)", "\n\n");
