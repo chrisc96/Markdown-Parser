@@ -1,6 +1,10 @@
 Using this as a reference to generate correct markdown regex's and test cases
 > http://spec.commonmark.org/0.28/
 
+Used this page to help with regex's:
+> https://github.com/markedjs/marked/blob/master/lib/marked.js
+
+
 Grammar I will likely be following (as of 18/03):
 
 Document =  [Block]+
