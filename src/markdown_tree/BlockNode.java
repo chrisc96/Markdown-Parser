@@ -3,19 +3,17 @@ package markdown_tree;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class BlockNode extends DocumentNode {
 
+    // BlockNode Types
     public static final int ParagraphBlock = 0;
     // HEADING 1-6 NEED TO HAVE VALUE 1-6 UNLESS YOU WANT TO BOILERPLATE CLASSES...
-    public static final int H1 = 1;
-    public static final int H2 = 2;
-    public static final int H3 = 3;
-    public static final int H4 = 4;
-    public static final int H5 = 5;
-    public static final int H6 = 6;
+    private static final int H1 = 1;
+    private static final int H2 = 2;
+    private static final int H3 = 3;
+    private static final int H4 = 4;
+    private static final int H5 = 5;
+    private static final int H6 = 6;
 
     public static final int Text = 7;
     public static final int Bold = 8;

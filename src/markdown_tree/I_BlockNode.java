@@ -10,16 +10,16 @@ public abstract class I_BlockNode {
     @Getter
     List<BlockNode> children = new ArrayList<>();
 
-    public void addChildVia(BlockNode blockNode) {
+    private void addChildVia(BlockNode blockNode) {
         getChildren().add(blockNode);
     }
 
     /**
-     * Created purely for semantics
-     * @param blockNode
+     * Created purely for semantics of code description.
+     * Doesn't do anything differently to addChildVia
+     * @param blockNode node to add to children of this node
      */
     public void addChild(BlockNode blockNode) {
         addChildVia(blockNode);
     }
-
 }
