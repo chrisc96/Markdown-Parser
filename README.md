@@ -13,4 +13,4 @@ List = BulletList | OrderedList
 
 LeafBlock = HorizontalRule | Header | Paragraph | BlankLine | FencedCodeBlock
 
-InLine = CodeSpan | Bold | Italic | HardLineBreak | SoftLineBreak | Test
+InLine = CodeSpan | Bold | Italic | HardLineBreak | SoftLineBreak | Text
