@@ -26,6 +26,107 @@ public class MDParser_Tests {
     }
 
     @Test
+    public void Paragraph_Slicing_02() {
+        String input = "1st\n\nParagraph";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("1st");
+        expectedOutput.add("Paragraph");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
+    public void Paragraph_Slicing_03() {
+        String input = "1st\nParagraph\n\n2nd\nParagraph";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("1st\nParagraph");
+        expectedOutput.add("2nd\nParagraph");
+
+        Assert.assertEquals(expectedOutput, list);
+    }
+
+    @Test
+    public void Paragraph_Slicing_04() {
+        String input = "#### Hello\nHi";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("#### Hello");
+        expectedOutput.add("Hi");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
+    public void Paragraph_Slicing_05() {
+        String input = "# Sushi\n## Maguro";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("# Sushi");
+        expectedOutput.add("## Maguro");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
+    public void Paragraph_Slicing_06() {
+        String input = "# Sushi\n## Maguro\n## Hello";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("# Sushi");
+        expectedOutput.add("## Maguro");
+        expectedOutput.add("## Hello");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
+    public void Paragraph_Slicing_07() {
+        String input = "# Sushi\nHello\nHi\n## Maguro\n## Hello";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("# Sushi");
+        expectedOutput.add("Hello\nHi");
+        expectedOutput.add("## Maguro");
+        expectedOutput.add("## Hello");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
+    public void Paragraph_Slicing_08() {
+        String input = "#Sushi\nSameLine\n## NotSame";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("#Sushi\nSameLine");
+        expectedOutput.add("## NotSame");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+    @Test
     public void Test_Heading_Regex_00() {
         List<String> inputs = new ArrayList<>();
         inputs.add("# ");

@@ -59,15 +59,13 @@ public class MDParser {
     }
 
     public void parse() {
-        Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
-
         // Create tree structure, begin to parse each paragraph block
         I_BlockNode markdownTree = new DocumentNode();
 
+        Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
         for (String string : pBlocks.keySet()) {
             Scanner sc = new Scanner(string);
             sc.useDelimiter("\t"); // May need to change
-
             parseParagraph(sc, markdownTree);
         }
     }
@@ -149,91 +147,37 @@ public class MDParser {
     }
 
     /**
-     * Goes through markdown input and returns paragraphBlocks.
-     * Essentially acts as a lexer.
-     * E.G
-     * 1st\n
-     * Paragraph\n
-     * \n
-     * 2nd\n
-     * Paragraph
-     *
-     * Returns two Strings, 1. 1st\nParagraph
-     *                      2. 2nd\nParagraph
-     *
-     * E.G 2
-     * # HELLO\n
-     * Hi
-     *
-     * Returns two Strings  1. # Hello
-     *                      2. Hi
-     *
      * @param markdownInput some markdown input
-     * @return Map of each paragraphs content to their equal BlockNode
+     * @return Map of each paragraphs content to their equal ParagraphBlockNode
      */
     public Map<String, BlockNode> getParagraphBlocks(String markdownInput) {
         Map<String, BlockNode> pBlocks = new LinkedHashMap<>();
 
-        // When headings finish, they are their own paragraph block
-        // so we need to combine this into our match
-
-//        Pattern paragraphBlockComplete = Pattern.compile(PARAGRAPHBLOCK + "|" + HEADING, Pattern.MULTILINE);
-//        Matcher m = paragraphBlockComplete.matcher(markdownInput);
-
-
         Matcher firstPattern = firstPattern(markdownInput, HEADING, PARAGRAPHBLOCK, TEXT);
-        int idx = 0;
-        int lastIdxFound = 0;
+        int endIdxOfMatch = 0;
+        int endIdxOfLastMatch = 0;
 
         while (firstPattern != null) {
-            idx += firstPattern.end();
-            // Checking the first pattern we found was a heading
+            endIdxOfMatch += firstPattern.end();
+
+            // Checking if the first pattern we found was a heading
             if (firstPattern.pattern() == HEADING) {
-                BlockNode block = new BlockNode();
-                String headingToEdit = markdownInput.substring(lastIdxFound, idx);
-                String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
+                String headingToEdit = markdownInput.substring(endIdxOfLastMatch, endIdxOfMatch);
+                String headingWithNoNewLines = headingToEdit.replaceAll("\n", ""); // We don't want new lines inside
 
-                pBlocks.put(headingWithNoNewLines, block);
-            }
-            else if (firstPattern.pattern() == PARAGRAPHBLOCK) {
-
+                pBlocks.put(headingWithNoNewLines, new BlockNode());
             }
             else if (firstPattern.pattern() == TEXT) {
-                BlockNode block = new BlockNode();
-                String textNoNewLines = markdownInput.substring(lastIdxFound, idx);
-                pBlocks.put(textNoNewLines, block);
+                String textNoNewLines = markdownInput.substring(endIdxOfLastMatch, endIdxOfMatch);
+                pBlocks.put(textNoNewLines, new BlockNode());
             }
-            lastIdxFound = idx;
-            firstPattern = firstPattern(markdownInput.substring(lastIdxFound, markdownInput.length()), HEADING, PARAGRAPHBLOCK, TEXT);
-
-//
-//            Matcher heading = HEADING.matcher(m.group());
-//
-//            if (heading.find()) {
-//                BlockNode block = new BlockNode();
-//                String headingToEdit = markdownInput.substring(lastIdxFound, idx);
-//                String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
-//
-//                pBlocks.put(headingWithNoNewLines, block);
-//                lastIdxFound = idx;
-//            }
-//            // Must be text
-//            else {
-//                BlockNode block = new BlockNode();
-//                Matcher pblock = PARAGRAPHBLOCK.matcher(m.group());
-//                if (pblock.find()) {
-//                    System.out.println("HERE");
-//                }
-//                String textNoNewLines = markdownInput.substring(lastIdxFound, idx);
-//                pBlocks.put(textNoNewLines, block);
-//                lastIdxFound = idx;
-//            }
-            // heading.reset();
+            endIdxOfLastMatch = endIdxOfMatch;
+            firstPattern = firstPattern(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()), HEADING, PARAGRAPHBLOCK, TEXT);
         }
-        // Last paragraph
-        if (lastIdxFound != markdownInput.length()) {
-            BlockNode block = new BlockNode();
-            pBlocks.put(markdownInput.substring(lastIdxFound, markdownInput.length()), block);
+        // Last paragraph. Doesn't matter what type it is as there's only one line left.
+        if (endIdxOfLastMatch != markdownInput.length()) {
+            pBlocks.put(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()),
+                        new BlockNode());
         }
         return pBlocks;
     }
