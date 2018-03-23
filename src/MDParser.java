@@ -17,6 +17,7 @@ public class MDParser {
     // Useful Patterns
 
     // 100% working
+
     static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )", Pattern.MULTILINE);
 
     // UNTESTED
@@ -29,7 +30,9 @@ public class MDParser {
 
     static Pattern BLOCKQUOTE = Pattern.compile("(^> | {4})");
 
-    static Pattern TEXT = Pattern.compile("^[^\\n]+", Pattern.MULTILINE);
+    static Pattern SINGLE_LINE_TEXT = Pattern.compile("^[^\\n\\n]+");
+
+    static Pattern TEXT = Pattern.compile("^([^\\n]+(?:\\n?(?!" + HEADING + ")[^\\n]+)+)", Pattern.MULTILINE);
 
 
     public MDParser(Path inputFile, OutputStrategy output) {
