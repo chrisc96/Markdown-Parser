@@ -1,7 +1,7 @@
 import cli_parse.MainCLIParameters;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
-import outputs.OutputStrategy;
+import outputs.OutputHandler;
 
 public class Main {
 
@@ -38,8 +38,8 @@ public class Main {
         System.exit(0);
     }
 
-    private OutputStrategy getStrategy(Integer format) {
-        return  format == MainCLIParameters.HTML ? OutputStrategy.HTML :
-                format == MainCLIParameters.LATEX ? OutputStrategy.LATEX : OutputStrategy.LATEX;
+    private OutputHandler getStrategy(Integer format) {
+        return  format == MainCLIParameters.HTML ? new OutputHandler.HTMLOutput() :
+                format == MainCLIParameters.LATEX ? new OutputHandler.LaTeXOutput() : new OutputHandler.ASCII();
     }
 }

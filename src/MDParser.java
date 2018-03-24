@@ -1,6 +1,6 @@
 import cli_parse.FilePathConverter;
 import markdown_tree.*;
-import outputs.OutputStrategy;
+import outputs.OutputHandler;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -9,21 +9,22 @@ import java.util.regex.Matcher;
 
 public class MDParser extends MDCoreLexer {
 
-    MDParser(Path inputFile, OutputStrategy output) {
+    MDParser(Path inputFile, OutputHandler output) {
         String s = new FilePathConverter().convert(inputFile);
         this.markdown = preProcessMarkdown(s);
-        this.type = output;
+        this.outputHandler = output;
     }
 
     // Used by JUnit tests instead of reading test cases/acceptance tests
-    MDParser(String markdown, OutputStrategy output) {
+    MDParser(String markdown, OutputHandler output) {
         this.markdown = preProcessMarkdown(markdown);
-        this.type = output;
+        this.outputHandler = output;
     }
 
     public void parse() {
         // Create tree structure, begin to parse each paragraph block
         markdownTree = new DocumentNode(null);
+        outputHandler.setRoot(markdownTree);
 
         Map<String, BlockNode> pBlocks = getParagraphBlocks(markdownTree, markdown);
         for (String string : pBlocks.keySet()) {
@@ -31,6 +32,9 @@ public class MDParser extends MDCoreLexer {
             sc.useDelimiter("\t"); // May need to change
             parseParagraph(markdownTree, sc);
         }
+
+        outputHandler.convert();
+        outputHandler.outputToFile();
     }
 
     private void parseParagraph(I_BlockNode parent, Scanner sc) {
