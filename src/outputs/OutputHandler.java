@@ -3,10 +3,15 @@ package outputs;
 import lombok.Setter;
 import markdown_tree.I_BlockNode;
 
+import java.nio.file.Path;
+
 public abstract class OutputHandler {
 
     @Setter
     public I_BlockNode root;
+
+    @Setter
+    Path outputFile;
 
     public abstract String convert();
 

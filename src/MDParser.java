@@ -10,8 +10,11 @@ import java.util.regex.Matcher;
 public class MDParser extends MDCoreLexer {
 
     MDParser(Path inputFile, OutputHandler output) {
-        String s = new FilePathConverter().convert(inputFile);
-        this.markdown = preProcessMarkdown(s);
+        this.inputFile = inputFile;
+
+        // Convert contents of file to String
+        String markdown = new FilePathConverter().convert(inputFile);
+        this.markdown = preProcessMarkdown(markdown);
         this.outputHandler = output;
     }
 

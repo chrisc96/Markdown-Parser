@@ -3,6 +3,10 @@ import com.beust.jcommander.JCommander;
 import com.beust.jcommander.ParameterException;
 import outputs.OutputHandler;
 
+import java.nio.file.Path;
+
+import static cli_parse.OutputFileValidator.getOutputFileFormat;
+
 public class Main {
 
     private final MainCLIParameters mainArgs = new MainCLIParameters();
@@ -28,8 +32,13 @@ public class Main {
             showUsage(jcommander);
         }
 
-        // Gets value passed in via command line and sets output strategy (HTML, LaTeX, Ascii)
-        MDParser parser = new MDParser(mainArgs.getInputFile(), getStrategy(mainArgs.getFormat()));
+        // Gets values for input and output files passed in via command line
+        Path inputFile = mainArgs.getInputFile();
+        Path outputFile = mainArgs.getOutputFile();
+        OutputHandler outputFormat = getStrategy(getOutputFileFormat(outputFile));
+        outputFormat.setOutputFile(outputFile);
+
+        MDParser parser = new MDParser(inputFile, outputFormat);
         parser.parse();
     }
 

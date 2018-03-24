@@ -29,7 +29,7 @@ public class TxtFileValidator implements IParameterValidator {
         return (Files.exists(p, LinkOption.NOFOLLOW_LINKS));
     }
 
-    private String getFileExtension(String value) {
+    static String getFileExtension(String value) {
         int i = value.lastIndexOf('.');
         if (i >= 0) {
             return value.substring(i+1);
