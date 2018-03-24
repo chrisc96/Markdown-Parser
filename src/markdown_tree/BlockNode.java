@@ -23,10 +23,13 @@ public class BlockNode extends DocumentNode {
     @Getter @Setter
     int blockType;
 
-    public BlockNode(int type) {
+    public BlockNode(I_BlockNode parent, int type) {
+        super(parent);
         this.blockType = type;
     }
-    public BlockNode() {}
+    public BlockNode(I_BlockNode parent) {
+        super(parent);
+    }
 
     public boolean isHeading() {
         return  blockType == H1 ||

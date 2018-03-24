@@ -1,10 +1,7 @@
-import jdk.nashorn.internal.ir.Block;
 import markdown_tree.BlockNode;
-import markdown_tree.HeadingNode;
 import org.junit.Assert;
 import org.junit.Test;
-import outputs.html.HTMLStrategy;
-
+import outputs.OutputStrategy;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,8 +14,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_01() {
         String input = "Hello\n\nTest That\nShould\n\nReturn 3 paragraph blocks";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("Hello");
@@ -32,8 +29,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_02() {
         String input = "1st\n\nParagraph";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("1st");
@@ -46,8 +43,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_03() {
         String input = "1st\nParagraph\n\n2nd\nParagraph";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("1st\nParagraph");
@@ -60,8 +57,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_04() {
         String input = "#### Hello\nHi";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("#### Hello");
@@ -74,8 +71,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_05() {
         String input = "# Sushi\n## Maguro";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("# Sushi");
@@ -88,8 +85,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_06() {
         String input = "# Sushi\n## Maguro\n## Hello";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("# Sushi");
@@ -103,8 +100,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_07() {
         String input = "# Sushi\nHello\nHi\n## Maguro\n## Hello";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("# Sushi");
@@ -119,8 +116,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_08() {
         String input = "#Sushi\nSameLine\n## NotSame";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("#Sushi\nSameLine");
@@ -133,8 +130,8 @@ public class MDParser_Tests {
     public void Paragraph_Slicing_09() {
         String input = "# ";
 
-        MDParser parser = new MDParser(input, new HTMLStrategy());
-        Set<String> list = parser.getParagraphBlocks(input).keySet();
+        MDParser parser = new MDParser(input, OutputStrategy.HTML);
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
 
         Set<String> expectedOutput = new LinkedHashSet<>();
         expectedOutput.add("# ");
@@ -252,7 +249,7 @@ public class MDParser_Tests {
     @Test
     public void Test_Parser_01() {
         String input = "# ";
-        MDParser markdown = new MDParser(input, new HTMLStrategy());
+        MDParser markdown = new MDParser(input, OutputStrategy.HTML);
         markdown.parse();
         BlockNode paragraphBlocks = markdown.getMarkdownTree().getChildren().get(0);
         BlockNode headingBlock = paragraphBlocks.getChildren().get(0);

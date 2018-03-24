@@ -23,9 +23,9 @@ public class MDParser extends MDCoreLexer {
 
     public void parse() {
         // Create tree structure, begin to parse each paragraph block
-        markdownTree = new DocumentNode();
+        markdownTree = new DocumentNode(null);
 
-        Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
+        Map<String, BlockNode> pBlocks = getParagraphBlocks(markdownTree, markdown);
         for (String string : pBlocks.keySet()) {
             Scanner sc = new Scanner(string);
             sc.useDelimiter("\t"); // May need to change
@@ -34,7 +34,7 @@ public class MDParser extends MDCoreLexer {
     }
 
     private void parseParagraph(I_BlockNode parent, Scanner sc) {
-        BlockNode paragraphBlock = new BlockNode(BlockNode.ParagraphBlock);
+        BlockNode paragraphBlock = new BlockNode(parent, BlockNode.ParagraphBlock);
         parent.addChild(paragraphBlock);
 
         // Parse inner content
@@ -51,7 +51,7 @@ public class MDParser extends MDCoreLexer {
         // Go through groupings matched by regex
         MatchResult headingMatchResult = sc.match();
         int headingLevel = HeadingNode.getLevelFrom(headingMatchResult.group());
-        BlockNode heading = new HeadingNode(headingLevel);
+        BlockNode heading = new HeadingNode(parent, headingLevel);
         parent.addChild(heading);
 
         if (headingMatchResult.group(2) != null) {
@@ -70,13 +70,13 @@ public class MDParser extends MDCoreLexer {
         if (sc.hasNext(BOLD) || sc.hasNext(ITALIC)) {
             Matcher m = findFirstPattern(group, BOLD, ITALIC);
             if (m.pattern() == BOLD) {
-                BlockNode bold = new BlockNode(BlockNode.Bold);
+                BlockNode bold = new BlockNode(parent, BlockNode.Bold);
                 parent.addChild(bold);
 
                 parseInline(parent, sc, m.group());
             }
             else {
-                BlockNode italic = new BlockNode(BlockNode.Italic);
+                BlockNode italic = new BlockNode(parent, BlockNode.Italic);
                 parent.addChild(italic);
 
                 parseInline(parent, sc, m.group());
@@ -91,7 +91,7 @@ public class MDParser extends MDCoreLexer {
     private void parseText(I_BlockNode parent, Scanner sc, String group) {
         Matcher m = TEXT.matcher(group);
         if (m.find()) {
-            BlockNode text = new TextNode(group);
+            BlockNode text = new TextNode(parent, group);
             parent.addChild(text);
         }
     }

@@ -1,4 +1,3 @@
-import cli_parse.FilePathConverter;
 import lombok.Getter;
 import markdown_tree.BlockNode;
 import markdown_tree.I_BlockNode;
@@ -72,10 +71,12 @@ public class MDCoreLexer {
      * Essentially acts as a tokeniser so the parser only needs to parse what is necessary.
      * Makes the parsing/stringify process more efficient for initial overhead
      *
+     *
+     * @param markdownTree root node
      * @param markdownInput some markdown string
      * @return Map of each paragraph block's content to their equal BlockNode with type ParagraphBlock
      */
-    public Map<String, BlockNode> getParagraphBlocks(String markdownInput) {
+    public Map<String, BlockNode> getParagraphBlocks(I_BlockNode markdownTree, String markdownInput) {
         // String = contents of block node, BlockNode represents that structure
         Map<String, BlockNode> pBlocks = new LinkedHashMap<>();
 
@@ -93,11 +94,11 @@ public class MDCoreLexer {
                 // We will remove leading/trailing whitespace from text inside heading when parsing
                 String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
 
-                pBlocks.put(headingWithNoNewLines, new BlockNode());
+                pBlocks.put(headingWithNoNewLines, new BlockNode(markdownTree));
             }
             else if (firstPattern.pattern() == TEXT) {
                 String textNoNewLines = markdownInput.substring(endIdxOfLastMatch, endIdxOfMatch);
-                pBlocks.put(textNoNewLines, new BlockNode());
+                pBlocks.put(textNoNewLines, new BlockNode(markdownTree));
             }
             endIdxOfLastMatch = endIdxOfMatch;
             firstPattern = findFirstPattern(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()), HEADING, PARAGRAPHBLOCK, TEXT);
@@ -105,7 +106,7 @@ public class MDCoreLexer {
         // Last paragraph. Doesn't matter what type it is as there's only one line left.
         if (endIdxOfLastMatch != markdownInput.length()) {
             pBlocks.put(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()),
-                    new BlockNode());
+                        new BlockNode(markdownTree));
         }
         return pBlocks;
     }
