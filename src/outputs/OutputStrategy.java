@@ -1,7 +1,7 @@
 package outputs;
 
-public interface OutputStrategy {
-
-    void execute();
-
+public enum OutputStrategy {
+    HTML,
+    LATEX,
+    ASCII_MONO
 }

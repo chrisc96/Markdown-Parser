@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 
 public class HeadingNode extends BlockNode {
 
-    public HeadingNode(int headLevel) {
+    public HeadingNode(I_BlockNode parent, int headLevel) {
+        super(parent);
         this.blockType = headLevel;
     }
 
