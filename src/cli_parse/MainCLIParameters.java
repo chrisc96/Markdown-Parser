@@ -26,8 +26,9 @@ public class MainCLIParameters {
                 description = "Markdown file in a .txt to be converted.")
     @Getter Path inputFile;
 
-    @Parameter( names = {"--format", "-f"},
-                validateWith = OutputStrategyValidator.class,
-                description = "Format for markdown to be exported to (HTML = 0, LaTeX = 1, ASCII = 2")
-    @Getter int format = HTML;
+    @Parameter( names = {"--outputFile", "-o"},
+                validateWith = OutputFileValidator.class,
+                converter = FilePathConverter.class,
+                description = "Path and name of file where you want output to be located. Include extensions (.md, .tex, .ascii)")
+    @Getter Path outputFile = null;
 }
