@@ -1,4 +1,5 @@
 import markdown_tree.BlockNode;
+import markdown_tree.HeadingNode;
 import org.junit.Assert;
 import org.junit.Test;
 import outputs.OutputHandler;
@@ -255,6 +256,6 @@ public class MDParser_Tests {
         BlockNode headingBlock = paragraphBlocks.getChildren().get(0);
 
         // Makes sure an empty heading does not create text node as child, only the heading.
-        Assert.assertTrue(headingBlock.isHeading() && headingBlock.getChildren().size() == 0);
+        Assert.assertTrue(headingBlock instanceof HeadingNode && headingBlock.getChildren().size() == 0);
     }
 }
