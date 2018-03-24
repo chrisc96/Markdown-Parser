@@ -1,5 +1,7 @@
 import cli_parse.FilePathConverter;
+import lombok.Getter;
 import markdown_tree.BlockNode;
+import markdown_tree.I_BlockNode;
 import outputs.OutputStrategy;
 
 import java.util.LinkedHashMap;
@@ -19,11 +21,15 @@ import java.util.regex.Pattern;
 public class MDCoreLexer {
 
     String markdown;
+
+    @Getter
+    I_BlockNode markdownTree;
     OutputStrategy type;
 
     // Patterns
     static Pattern PARAGRAPHBLOCK = Pattern.compile("\\n[\\n]+", Pattern.MULTILINE);
-    static Pattern HEADING = Pattern.compile("^ {0,3}(#{1,6} ) *([^\\n]+?) *#* *(?:\\n+|$)|^ {0,3}(#{1,6} )", Pattern.MULTILINE);
+    static Pattern HEADING_PREFIX = Pattern.compile("^ {0,3}(#{1,6} )");
+    static Pattern HEADING = Pattern.compile(HEADING_PREFIX + " *([^\\n]+?) *#* *(?:\\n+|$)|" + HEADING_PREFIX,  Pattern.MULTILINE);
 
     // Matches multi line text of anything until it finds either a heading (which it doesn't capture) or double line break.
     // Includes \n single occurences if found.

@@ -1,3 +1,6 @@
+import jdk.nashorn.internal.ir.Block;
+import markdown_tree.BlockNode;
+import markdown_tree.HeadingNode;
 import org.junit.Assert;
 import org.junit.Test;
 import outputs.html.HTMLStrategy;
@@ -127,6 +130,20 @@ public class MDParser_Tests {
     }
 
     @Test
+    public void Paragraph_Slicing_09() {
+        String input = "# ";
+
+        MDParser parser = new MDParser(input, new HTMLStrategy());
+        Set<String> list = parser.getParagraphBlocks(input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("# ");
+
+        Assert.assertEquals(list, expectedOutput);
+    }
+
+
+    @Test
     public void Test_Heading_Regex_00() {
         List<String> inputs = new ArrayList<>();
         inputs.add("# ");
@@ -230,5 +247,17 @@ public class MDParser_Tests {
         String input = "foo\\n    # bar";
         Matcher m = MDParser.HEADING.matcher(input);
         Assert.assertFalse(m.find());
+    }
+
+    @Test
+    public void Test_Parser_01() {
+        String input = "# ";
+        MDParser markdown = new MDParser(input, new HTMLStrategy());
+        markdown.parse();
+        BlockNode paragraphBlocks = markdown.getMarkdownTree().getChildren().get(0);
+        BlockNode headingBlock = paragraphBlocks.getChildren().get(0);
+
+        // Makes sure an empty heading does not create text node as child, only the heading.
+        Assert.assertTrue(headingBlock.isHeading() && headingBlock.getChildren().size() == 0);
     }
 }

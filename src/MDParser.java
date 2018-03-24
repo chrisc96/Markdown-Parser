@@ -9,7 +9,6 @@ import java.util.regex.Matcher;
 
 public class MDParser extends MDCoreLexer {
 
-
     MDParser(Path inputFile, OutputStrategy output) {
         String s = new FilePathConverter().convert(inputFile);
         this.markdown = preProcessMarkdown(s);
@@ -24,17 +23,17 @@ public class MDParser extends MDCoreLexer {
 
     public void parse() {
         // Create tree structure, begin to parse each paragraph block
-        I_BlockNode markdownTree = new DocumentNode();
+        markdownTree = new DocumentNode();
 
         Map<String, BlockNode> pBlocks = getParagraphBlocks(markdown);
         for (String string : pBlocks.keySet()) {
             Scanner sc = new Scanner(string);
             sc.useDelimiter("\t"); // May need to change
-            parseParagraph(sc, markdownTree);
+            parseParagraph(markdownTree, sc);
         }
     }
 
-    private void parseParagraph(Scanner sc, I_BlockNode parent) {
+    private void parseParagraph(I_BlockNode parent, Scanner sc) {
         BlockNode paragraphBlock = new BlockNode(BlockNode.ParagraphBlock);
         parent.addChild(paragraphBlock);
 
@@ -43,15 +42,15 @@ public class MDParser extends MDCoreLexer {
             parseHeading(paragraphBlock, sc);
         }
         // Default fall back case, parse it as text
-        else {
-            parseText(paragraphBlock, sc);
+        else if (sc.hasNext(TEXT)) {
+            parseText(paragraphBlock, sc, sc.match().group());
         }
     }
 
-    private void parseHeading(BlockNode parent, Scanner sc) {
+    private void parseHeading(I_BlockNode parent, Scanner sc) {
         // Go through groupings matched by regex
         MatchResult headingMatchResult = sc.match();
-        int headingLevel = HeadingNode.getLevelFrom(headingMatchResult.group(1));
+        int headingLevel = HeadingNode.getLevelFrom(headingMatchResult.group());
         BlockNode heading = new HeadingNode(headingLevel);
         parent.addChild(heading);
 
@@ -67,7 +66,7 @@ public class MDParser extends MDCoreLexer {
      * @param sc
      * @param group
      */
-    private void parseInline(BlockNode parent, Scanner sc, String group) {
+    private void parseInline(I_BlockNode parent, Scanner sc, String group) {
         if (sc.hasNext(BOLD) || sc.hasNext(ITALIC)) {
             Matcher m = findFirstPattern(group, BOLD, ITALIC);
             if (m.pattern() == BOLD) {
@@ -85,14 +84,14 @@ public class MDParser extends MDCoreLexer {
         }
         // Must be text
         else {
-            parseText(parent, sc);
+            parseText(parent, sc, group);
         }
     }
 
-    private void parseText(BlockNode parent, Scanner sc) {
-        Matcher m = TEXT.matcher(sc.match().group());
+    private void parseText(I_BlockNode parent, Scanner sc, String group) {
+        Matcher m = TEXT.matcher(group);
         if (m.find()) {
-            BlockNode text = new TextNode(m.group());
+            BlockNode text = new TextNode(group);
             parent.addChild(text);
         }
     }

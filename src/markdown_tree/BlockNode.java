@@ -7,7 +7,8 @@ public class BlockNode extends DocumentNode {
 
     // BlockNode Types
     public static final int ParagraphBlock = 0;
-    // HEADING 1-6 NEED TO HAVE VALUE 1-6 UNLESS YOU WANT TO BOILERPLATE CLASSES...
+    // HEADING 1-6 NEED TO HAVE VALUE 1-6 UNLESS YOU WANT TO HAVE BOILERPLATE CLASSES
+    // FOR EVERY NODE THAT OFFERS THE SAME FUNCTIONALITY AS THE TOP LEVEL NODE
     private static final int H1 = 1;
     private static final int H2 = 2;
     private static final int H3 = 3;
