@@ -1,7 +1,7 @@
 import lombok.Getter;
 import markdown_tree.BlockNode;
 import markdown_tree.I_BlockNode;
-import outputs.OutputStrategy;
+import outputs.OutputHandler;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -23,7 +23,7 @@ public class MDCoreLexer {
 
     @Getter
     I_BlockNode markdownTree;
-    OutputStrategy type;
+    OutputHandler outputHandler;
 
     // Patterns
     static Pattern PARAGRAPHBLOCK = Pattern.compile("\\n[\\n]+", Pattern.MULTILINE);
@@ -74,7 +74,7 @@ public class MDCoreLexer {
      *
      * @param markdownTree root node
      * @param markdownInput some markdown string
-     * @return Map of each paragraph block's content to their equal BlockNode with type ParagraphBlock
+     * @return Map of each paragraph block's content to their equal BlockNode with outputHandler ParagraphBlock
      */
     public Map<String, BlockNode> getParagraphBlocks(I_BlockNode markdownTree, String markdownInput) {
         // String = contents of block node, BlockNode represents that structure
@@ -103,7 +103,7 @@ public class MDCoreLexer {
             endIdxOfLastMatch = endIdxOfMatch;
             firstPattern = findFirstPattern(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()), HEADING, PARAGRAPHBLOCK, TEXT);
         }
-        // Last paragraph. Doesn't matter what type it is as there's only one line left.
+        // Last paragraph. Doesn't matter what outputHandler it is as there's only one line left.
         if (endIdxOfLastMatch != markdownInput.length()) {
             pBlocks.put(markdownInput.substring(endIdxOfLastMatch, markdownInput.length()),
                         new BlockNode(markdownTree));
