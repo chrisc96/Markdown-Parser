@@ -1,3 +1,7 @@
+## How to run:
+
+TO FILL IN
+
 ## What I did:
 
 * Task 1, 2, 5.
@@ -13,26 +17,10 @@ I took this assignment as a challenge; not because it was conceptually difficult
 So I think putting effort into implementing it 'right' is where the real time comes into it. For instance, all the edge cases in the regex's,
 the esoteric nature of whitespacing and so much more. 
 
-## Summary and Thoughts
 
-If I wanted to implement the whole markdown parser I think I'm in a good position to do that with the framework I've developed.
-But in saying that (at least for me and my development speed), to implement it well and to complete all 14 tasks I think would take way too long. Longer than 2 weeks at least.
-I think next year if this was made a 40% assignment it would be better suited (I'm guessing the 40% assignments have a longer due period).
+## PEG (Markdown Grammar):
 
-I think as it's the first time the assignment has been run I just wanted to brief why I chose to do what I did/didn't in the hopes it
-will help next year. I think personally it was a brutal assignment if you want to do it correctly and totally not viable to finish in the time constraints
-if you followed my methodology...
-
-
-
-Using this as a reference to generate correct markdown regex's and test cases
-> http://spec.commonmark.org/0.28/
-
-Used this page to help with regex's:
-> https://github.com/markedjs/marked/blob/master/lib/marked.js
-
-
-Grammar I will likely be following (as of 18/03):
+Grammar I loosely followed:
 
 Document =  [Block]+
 
@@ -45,3 +33,23 @@ List = BulletList | OrderedList
 LeafBlock = HorizontalRule | Header | Paragraph | BlankLine | FencedCodeBlock
 
 InLine = CodeSpan | Bold | Italic | HardLineBreak | SoftLineBreak | Text
+
+## Summary and Thoughts:
+
+If I wished to implement the whole markdown parser in the future, I believe I'm in a good position to do that with the framework I've developed.
+But in saying that (at least for me and my development speed), to implement it well and to complete all 14 tasks I think would take way too long. Longer than 2 weeks at least.
+I think next year if this was made a 40% assignment it would be better suited (I'm guessing the 40% assignments have a longer due period).
+
+I think as it's the first time the assignment has been run I just wanted to brief why I chose to do what I did/didn't do in the hopes it
+will help next year. I think personally it was a brutal assignment if you wanted to do it correctly and totally wasn't viable to finish in the time constraints
+if you followed my methodology... Maybe I'm just slow. I digress.
+
+I'm interested to see how my choices will affect my grade.
+
+## References:
+
+Using this as a reference to generate correct markdown regex's and test cases
+> http://spec.commonmark.org/0.28/
+
+Used this page to help with regex's:
+> https://github.com/markedjs/marked/blob/master/lib/marked.js
