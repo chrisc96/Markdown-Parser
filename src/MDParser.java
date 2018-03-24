@@ -36,12 +36,11 @@ public class MDParser extends MDCoreLexer {
             parseParagraph(markdownTree, sc);
         }
 
-        outputHandler.convert();
         outputHandler.outputToFile();
     }
 
     private void parseParagraph(I_BlockNode parent, Scanner sc) {
-        BlockNode paragraphBlock = new BlockNode(parent, BlockNode.ParagraphBlock);
+        BlockNode paragraphBlock = new ParagraphBlockNode(parent);
         parent.addChild(paragraphBlock);
 
         // Parse inner content
@@ -77,13 +76,13 @@ public class MDParser extends MDCoreLexer {
         if (sc.hasNext(BOLD) || sc.hasNext(ITALIC)) {
             Matcher m = findFirstPattern(group, BOLD, ITALIC);
             if (m.pattern() == BOLD) {
-                BlockNode bold = new BlockNode(parent, BlockNode.Bold);
+                BlockNode bold = new BoldNode(parent);
                 parent.addChild(bold);
 
                 parseInline(parent, sc, m.group());
             }
             else {
-                BlockNode italic = new BlockNode(parent, BlockNode.Italic);
+                BlockNode italic = new ItalicNode(parent);
                 parent.addChild(italic);
 
                 parseInline(parent, sc, m.group());

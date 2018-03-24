@@ -5,7 +5,6 @@ import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class I_BlockNode {
 
@@ -32,7 +31,8 @@ public abstract class I_BlockNode {
         addChildVia(blockNode);
     }
 
-    public abstract String outputToHtml();
-    public abstract String outputToLaTeX();
-    public abstract String outputToASCII();
+    public abstract StringBuilder outputToHtml();
+    public abstract StringBuilder outputToLaTeX();
+    public abstract StringBuilder outputToASCII();
+
 }

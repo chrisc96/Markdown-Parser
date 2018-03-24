@@ -9,7 +9,32 @@ public class TextNode extends BlockNode {
 
     public TextNode(I_BlockNode parent, String contents) {
         super(parent);
-        this.blockType = BlockNode.Text;
         this.contents = contents;
+    }
+
+    @Override
+    public StringBuilder outputToHtml() {
+        StringBuilder block = new StringBuilder("");
+        if (parent instanceof HeadingNode) {
+            block.append(contents).append("\n");
+        }
+        else {
+            block.append("<p>").append(contents).append("</p>");
+        }
+
+        for (BlockNode node: children) {
+            block.append(node.outputToHtml());
+        }
+        return block;
+    }
+
+    @Override
+    public StringBuilder outputToLaTeX() {
+        return null;
+    }
+
+    @Override
+    public StringBuilder outputToASCII() {
+        return null;
     }
 }
