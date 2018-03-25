@@ -11,15 +11,15 @@ public class DocumentNode extends I_BlockNode {
 
     @Override
     public StringBuilder outputToHtml() {
-        StringBuilder hello = new StringBuilder(
+        StringBuilder string = new StringBuilder(
             "<!DOCTYPE html>\n<html>\n<head>\n<title>Markdown2HTML</title>\n</head>\n\n<body>\n");
 
         for (BlockNode node: children) {
-            hello.append(node.outputToHtml());
+            string.append(node.outputToHtml());
         }
 
-        hello.append("</body>\n\n</html>");
-        return hello;
+        string.append("</body>\n\n</html>");
+        return string;
     }
 
     @Override

@@ -8,11 +8,11 @@ public class ItalicNode extends BoldNode{
 
     @Override
     public StringBuilder outputToHtml() {
-        StringBuilder hello = new StringBuilder("");
+        StringBuilder string = new StringBuilder("");
         for (BlockNode node: children) {
-            hello.append(node.outputToHtml());
+            string.append(node.outputToHtml());
         }
-        return hello;
+        return string;
     }
 
     @Override
