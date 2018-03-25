@@ -5,7 +5,7 @@
 1. You will need to git clone the repo. I have added everyone as members that needs to be, hopefully this should be enough? I don't know if you have the ability to add your own SSH keys... Good Luck
 2. Once cloned, open terminal (tcsh) and cd into the repo and then cd further to: /out/artifacts/SWEN301_Project_1_jar
 3. You should see the jar file, a .bat script and a .sh script. To run the .sh file we need to make it executable, so type:
-> chmod 755 runme_linux.sh
+    chmod 755 runme_linux.sh
 4. Once this has completed, type ./runme_linux.sh. With any luck, this work have worked fine and will run everything.
 
 #### Running / Testing summary
