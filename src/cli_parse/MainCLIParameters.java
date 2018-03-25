@@ -27,6 +27,7 @@ public class MainCLIParameters {
     @Getter Path inputFile;
 
     @Parameter( names = {"--outputFile", "-o"},
+                required = true,
                 validateWith = OutputFileValidator.class,
                 converter = FilePathConverter.class,
                 description = "Path and name of file where you want output to be located. Include extensions (.md, .tex, .ascii)")
