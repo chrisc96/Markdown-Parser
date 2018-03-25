@@ -1,5 +1,6 @@
 package outputs;
 
+import cli_parse.MainCLIParameters;
 import lombok.Setter;
 import markdown_tree.I_BlockNode;
 
@@ -9,6 +10,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 
+/**
+ * Modified strategy pattern that uses inner classes
+ * to output the markdown Parse Tree to a desired format
+ * determined by the outputFile
+ */
 public abstract class OutputHandler {
 
     @Setter
@@ -19,6 +25,11 @@ public abstract class OutputHandler {
 
     public abstract StringBuilder convert();
     public abstract void outputToFile();
+
+    public static OutputHandler getOutputHandler(Integer format) {
+        return  format == MainCLIParameters.HTML ? new OutputHandler.HTMLOutput() :
+                format == MainCLIParameters.LATEX ? new OutputHandler.LaTeXOutput() : new ASCIIOutput();
+    }
 
     // Inner classes for conciseness
     public static class HTMLOutput extends OutputHandler{
@@ -51,11 +62,12 @@ public abstract class OutputHandler {
 
         @Override
         public void outputToFile() {
+            // TODO: Didn't get this far in assignment
             StringBuilder latex = convert();
         }
     }
 
-    public static class ASCII extends OutputHandler {
+    public static class ASCIIOutput extends OutputHandler {
 
         @Override
         public StringBuilder convert() {
@@ -64,7 +76,10 @@ public abstract class OutputHandler {
 
         @Override
         public void outputToFile() {
+            // TODO: Didn't get this far in assignment
             StringBuilder ascii = convert();
+
+
         }
     }
 }

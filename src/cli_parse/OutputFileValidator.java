@@ -40,7 +40,7 @@ public class OutputFileValidator implements IParameterValidator {
         }
     }
 
-    public static int getOutputFileFormat(Path file) {
+    public static int getExtensionAsInt(Path file) {
         if (file == null) return 0;
 
         String extension = getFileExtension(file.toString());
