@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
  * Contains all the helper functions for the parser.
  * Holds all the regex for pattern matching and
  * Handles all the preprocessing for the markdown input
- * before it's parsed
+ * before it's parsed.
  *
  */
 public class MDCoreLexer {
@@ -30,7 +30,7 @@ public class MDCoreLexer {
     // Patterns
     static Pattern PARAGRAPHBLOCK = Pattern.compile("\\n[\\n]+", Pattern.MULTILINE);
     static Pattern HEADING_PREFIX = Pattern.compile("^ {0,3}(#{1,6} )");
-    static Pattern HEADING = Pattern.compile(HEADING_PREFIX + " *([^\\n]+?) *#* *(?:\\n+|$)|" + HEADING_PREFIX,  Pattern.MULTILINE);
+    static Pattern HEADING = Pattern.compile(HEADING_PREFIX + " *([^\\n]+?) *(?:\\n+|$)|" + HEADING_PREFIX,  Pattern.MULTILINE);
 
     // Matches multi line text of anything until it finds either a heading (which it doesn't capture) or double line break.
     // Includes \n single occurences if found.
@@ -95,6 +95,14 @@ public class MDCoreLexer {
                 // We don't want new lines inside Headings
                 // We will remove leading/trailing whitespace from text inside heading when parsing
                 String headingWithNoNewLines = headingToEdit.replaceAll("\n", "");
+
+                // Edge case for heading with no text followed by \n followed by text
+                // See Paragraph Slicing 10 JUnit
+                if (endIdxOfMatch < markdownInput.length()) {
+                    if (markdownInput.charAt(endIdxOfMatch) == '\n') {
+                        endIdxOfMatch++;
+                    }
+                }
 
                 pBlocks.put(headingWithNoNewLines, new BlockNode(markdownTree));
             }
