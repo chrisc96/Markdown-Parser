@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Collections;
 
 public abstract class OutputHandler {
@@ -35,6 +34,7 @@ public abstract class OutputHandler {
 
             try {
                 Files.write(outputFile, Collections.singletonList(html), StandardCharsets.UTF_8);
+                System.out.println("HTML file output at: " + outputFile.toString());
             }
             catch (IOException e) {
                 e.printStackTrace();

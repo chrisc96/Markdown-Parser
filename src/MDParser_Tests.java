@@ -3,6 +3,8 @@ import markdown_tree.HeadingNode;
 import org.junit.Assert;
 import org.junit.Test;
 import outputs.OutputHandler;
+
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,6 +40,7 @@ public class MDParser_Tests {
         expectedOutput.add("Paragraph");
 
         Assert.assertEquals(list, expectedOutput);
+
     }
 
     @Test
@@ -245,17 +248,5 @@ public class MDParser_Tests {
         String input = "foo\\n    # bar";
         Matcher m = MDParser.HEADING.matcher(input);
         Assert.assertFalse(m.find());
-    }
-
-    @Test
-    public void Test_Parser_01() {
-        String input = "# ";
-        MDParser markdown = new MDParser(input, new OutputHandler.HTMLOutput());
-        markdown.parse();
-        BlockNode paragraphBlocks = markdown.getMarkdownTree().getChildren().get(0);
-        BlockNode headingBlock = paragraphBlocks.getChildren().get(0);
-
-        // Makes sure an empty heading does not create text node as child, only the heading.
-        Assert.assertTrue(headingBlock instanceof HeadingNode && headingBlock.getChildren().size() == 0);
     }
 }
