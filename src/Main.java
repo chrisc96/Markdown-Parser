@@ -5,7 +5,8 @@ import outputs.OutputHandler;
 
 import java.nio.file.Path;
 
-import static cli_parse.OutputFileValidator.getOutputFileFormat;
+import static cli_parse.OutputFileValidator.getExtensionAsInt;
+import static outputs.OutputHandler.getOutputHandler;
 
 public class Main {
 
@@ -35,7 +36,7 @@ public class Main {
         // Gets values for input and output files passed in via command line
         Path inputFile = mainArgs.getInputFile();
         Path outputFile = mainArgs.getOutputFile();
-        OutputHandler outputFormat = getStrategy(getOutputFileFormat(outputFile));
+        OutputHandler outputFormat = getOutputHandler(getExtensionAsInt(outputFile));
         outputFormat.setOutputFile(outputFile);
 
         MDParser parser = new MDParser(inputFile, outputFormat);
@@ -45,10 +46,5 @@ public class Main {
     private void showUsage(JCommander jcommander) {
         jcommander.usage();
         System.exit(0);
-    }
-
-    private OutputHandler getStrategy(Integer format) {
-        return  format == MainCLIParameters.HTML ? new OutputHandler.HTMLOutput() :
-                format == MainCLIParameters.LATEX ? new OutputHandler.LaTeXOutput() : new OutputHandler.ASCII();
     }
 }

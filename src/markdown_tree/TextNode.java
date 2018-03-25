@@ -21,10 +21,6 @@ public class TextNode extends BlockNode {
         else {
             block.append("<p>").append(contents).append("</p>");
         }
-
-        for (BlockNode node: children) {
-            block.append(node.outputToHtml());
-        }
         return block;
     }
 

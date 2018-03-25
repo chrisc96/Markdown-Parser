@@ -7,6 +7,10 @@ import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 
+/**
+ * Converts the markdown document structure into a Parse tree
+ * and calls an OutputHandler to output to the desired format/location
+ */
 public class MDParser extends MDCoreLexer {
 
     MDParser(Path inputFile, OutputHandler output) {
