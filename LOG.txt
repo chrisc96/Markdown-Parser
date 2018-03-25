@@ -37,3 +37,5 @@ Total Hours so far: 26.75... Shouldn't have spent 10 hours faffing about design.
 24-03-2018 11:35 CLEANED UP CODE, REFACTORED TO MAKE PARSER MORE COHESIVE
 24-03-2018 11:45 TOOK A BREAK
 24-03-2018 13:40 BACK. FIXED PARSER. TREE STRUCT SEEMINGLY NOW WORKING. READY TO STRINGIFY BASIC E.G's.
+
+A lot happened since I last updated this, check my commits :)
