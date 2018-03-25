@@ -1,0 +1,34 @@
+   # This is a header because in the markdown there 3 spaces before #
+    # This is text because in the markdown theres 4 spaces before #
+
+# 
+^ Testing empty heading followed by text (should be parsed as two separate paragraph blocks)
+
+# Test
+^ Testing non empty heading followed by text (should be parsed as two separate paragraph blocks)
+
+#    foo
+
+1st paragraph
+Second paragraph
+
+1st
+
+Gap above
+
+2nd
+
+Gap above
+
+# Headings still working...
+
+####### this is text because H7 doesn't exist!
+
+#this is text because headers must have a space after #
+
+# h1's do though
+## h2's do though
+### h3's do though
+#### h4's do though
+##### h5's do though
+###### h6's do though

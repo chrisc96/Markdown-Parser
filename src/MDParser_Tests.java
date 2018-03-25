@@ -143,6 +143,22 @@ public class MDParser_Tests {
         Assert.assertEquals(list, expectedOutput);
     }
 
+    @Test
+    public void Paragraph_Slicing_10() {
+        String input = "# \n" +
+                "^ Testing empty heading followed by text (should be parsed as two separate paragraph blocks)";
+
+        MDParser parser = new MDParser(input, new OutputHandler.HTMLOutput());
+        Set<String> list = parser.getParagraphBlocks(parser.markdownTree, input).keySet();
+
+        Set<String> expectedOutput = new LinkedHashSet<>();
+        expectedOutput.add("# ");
+        expectedOutput.add("^ Testing empty heading followed by text (should be parsed as two separate paragraph blocks)");
+
+        Assert.assertTrue(list.size() == 2); // One for header, one for text
+        Assert.assertEquals(expectedOutput, list);
+    }
+
 
     @Test
     public void Test_Heading_Regex_00() {
