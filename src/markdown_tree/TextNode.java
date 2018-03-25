@@ -16,7 +16,7 @@ public class TextNode extends BlockNode {
     public StringBuilder outputToHtml() {
         StringBuilder block = new StringBuilder("");
         if (parent instanceof HeadingNode) {
-            block.append(contents).append("\n");
+            block.append(contents);
         }
         else {
             block.append("<p>").append(contents).append("</p>");
