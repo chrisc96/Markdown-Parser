@@ -34,5 +34,4 @@ public abstract class I_BlockNode {
     public abstract StringBuilder outputToHtml();
     public abstract StringBuilder outputToLaTeX();
     public abstract StringBuilder outputToASCII();
-
 }

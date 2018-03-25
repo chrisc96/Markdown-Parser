@@ -1,5 +1,5 @@
 #!/bin/bash
-echo "Converting markdown tests (tests/markdown/XX.txt) to html (tests/html/XX.html)"
+echo "Converting markdown tests (tests/markdown/XX.txt) to html (tests/outputs/html/XX.html)"
 echo ""
 java -jar SWEN301-Project-1.jar -i ../../../tests/markdown/00.txt -o ../../../tests/outputs/html/00.html
 java -jar SWEN301-Project-1.jar -i ../../../tests/markdown/01.txt -o ../../../tests/outputs/html/01.html
