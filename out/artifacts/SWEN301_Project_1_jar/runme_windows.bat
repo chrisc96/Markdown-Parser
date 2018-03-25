@@ -28,6 +28,7 @@ java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJ
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Paragraph_Slicing_07
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Paragraph_Slicing_08
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Paragraph_Slicing_09
+java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Paragraph_Slicing_10
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Test_Heading_Regex_00
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Test_Heading_Regex_01
 java -cp SWEN301-Project-1.jar;lib/junit-4.12.jar;lib/hamcrest-core-1.3.jar RunJunitFromCLI MDParser_Tests#Test_Heading_Regex_02
